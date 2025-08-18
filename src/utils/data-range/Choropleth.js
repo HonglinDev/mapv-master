@@ -85,8 +85,100 @@ Choropleth.prototype.generateByMinMax = function (min, max) {
     // console.log('splitNum')
 }
 
+/**
+ * 根据自定义区间生成splitList
+ */
+Choropleth.prototype.generateByCustomRange = function (ranges, colors) {
+    var colorArray = colors || this.getDefaultColors();
+    this.splitList = [];
+    
+    for (var i = 0; i < ranges.length; i++) {
+        this.splitList.push({
+            start: ranges[i].start,
+            end: ranges[i].end,
+            value: colorArray[i % colorArray.length]
+        });
+    }
+}
+
+/**
+ * 获取默认颜色列表
+ */
+Choropleth.prototype.getDefaultColors = function () {
+    return [
+        'rgba(255, 255, 0, 0.8)', 
+        'rgba(253, 98, 104, 0.8)', 
+        'rgba(255, 146, 149, 0.8)', 
+        'rgba(255, 241, 193, 0.8)', 
+        'rgba(110, 176, 253, 0.8)', 
+        'rgba(52, 139, 251, 0.8)', 
+        'rgba(17, 102, 252, 0.8)',
+        'rgba(0, 176, 104, 0.8)',
+        'rgba(128, 128, 128, 0.8)',
+        'rgba(255, 0, 255, 0.8)'
+    ];
+}
+
+/**
+ * 添加新的区间规则
+ */
+Choropleth.prototype.addRange = function (range) {
+    this.splitList.push(range);
+    // 重新排序以确保区间顺序正确
+    this.splitList.sort((a, b) => (a.start || 0) - (b.start || 0));
+}
+
+/**
+ * 移除区间规则
+ */
+Choropleth.prototype.removeRange = function (index) {
+    if (index >= 0 && index < this.splitList.length) {
+        this.splitList.splice(index, 1);
+    }
+}
+
+/**
+ * 更新区间规则
+ */
+Choropleth.prototype.updateRange = function (index, range) {
+    if (index >= 0 && index < this.splitList.length) {
+        this.splitList[index] = range;
+        return true;
+    }
+    return false;
+}
+
+/**
+ * 获取所有区间规则
+ */
+Choropleth.prototype.getRanges = function () {
+    return this.splitList;
+}
+
 Choropleth.prototype.getLegend = function (options) {
     var splitList = this.splitList;
+    var container = document.createElement('div');
+    container.style.cssText = "background:#fff; padding: 5px; border: 1px solid #ccc;";
+    var html = '';
+    
+    for (var i = 0; i < splitList.length; i++) {
+        var range = splitList[i];
+        var label = '';
+        if (range.start !== undefined && range.end !== undefined) {
+            label = range.start + ' - ' + range.end;
+        } else if (range.start !== undefined) {
+            label = '> ' + range.start;
+        } else if (range.end !== undefined) {
+            label = '< ' + range.end;
+        } else {
+            label = 'All';
+        }
+        
+        html += '<div style="line-height: 19px;"><span style="vertical-align: -2px; display: inline-block; width: 30px;height: 19px;background:' + range.value + ';"></span><span style="margin-left: 3px;">' + label + '<span></div>';
+    }
+    
+    container.innerHTML = html;
+    return container;
 }
 
 export default Choropleth;

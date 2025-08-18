@@ -348,6 +348,121 @@ DataSet.prototype.getUnique = function (columnName) {
     return data;
 }
 
+/**
+ * 获取平均值
+ */
+DataSet.prototype.getAverage = function (columnName) {
+    var data = this._data;
+
+    if (!data || data.length <= 0) {
+        return;
+    }
+
+    var sum = 0;
+    var count = 0;
+
+    for (var i = 0; i < data.length; i++) {
+        if (data[i][columnName] !== undefined) {
+            sum += parseFloat(data[i][columnName]);
+            count++;
+        }
+    }
+
+    return count > 0 ? sum / count : 0;
+}
+
+/**
+ * 数据排序
+ * @param {string} columnName - 排序列名
+ * @param {string} order - 排序方式 'asc' 或 'desc'
+ */
+DataSet.prototype.sort = function (columnName, order = 'asc') {
+    this._data.sort((a, b) => {
+        const aVal = parseFloat(a[columnName]);
+        const bVal = parseFloat(b[columnName]);
+        
+        if (order === 'desc') {
+            return bVal - aVal;
+        }
+        return aVal - bVal;
+    });
+    
+    this._trigger('change');
+}
+
+/**
+ * 数据分页
+ * @param {number} page - 页码（从1开始）
+ * @param {number} pageSize - 每页数据条数
+ */
+DataSet.prototype.getPage = function (page, pageSize) {
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize;
+    return this._data.slice(start, end);
+}
+
+/**
+ * 获取数据总数
+ */
+DataSet.prototype.getTotal = function () {
+    return this._data.length;
+}
+
+/**
+ * 数据分组
+ * @param {string} columnName - 分组列名
+ */
+DataSet.prototype.groupBy = function (columnName) {
+    const groups = {};
+    
+    this._data.forEach(item => {
+        const key = item[columnName];
+        if (!groups[key]) {
+            groups[key] = [];
+        }
+        groups[key].push(item);
+    });
+    
+    return groups;
+}
+
+/**
+ * 查找数据
+ * @param {function} predicate - 查找条件函数
+ */
+DataSet.prototype.find = function (predicate) {
+    for (let i = 0; i < this._data.length; i++) {
+        if (predicate(this._data[i])) {
+            return this._data[i];
+        }
+    }
+    return null;
+}
+
+/**
+ * 查找所有匹配的数据
+ * @param {function} predicate - 查找条件函数
+ */
+DataSet.prototype.findAll = function (predicate) {
+    return this._data.filter(predicate);
+}
+
+/**
+ * 数据映射转换
+ * @param {function} mapper - 映射函数
+ */
+DataSet.prototype.map = function (mapper) {
+    return this._data.map(mapper);
+}
+
+/**
+ * 数据过滤
+ * @param {function} filter - 过滤函数
+ */
+DataSet.prototype.filter = function (filter) {
+    return this._data.filter(filter);
+}
+
 function deepCopy(obj) {
     var newObj;
     if (typeof obj == 'object') {

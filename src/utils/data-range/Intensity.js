@@ -124,6 +124,87 @@ Intensity.prototype.getSize = function (value) {
 
 }
 
+/**
+ * 设置渐变色
+ */
+Intensity.prototype.setGradient = function (gradient) {
+    this.gradient = gradient;
+    this.initPalette();
+}
+
+/**
+ * 获取当前渐变色配置
+ */
+Intensity.prototype.getGradient = function () {
+    return this.gradient;
+}
+
+/**
+ * 根据预设主题设置渐变色
+ */
+Intensity.prototype.setTheme = function (theme) {
+    const themes = {
+        'rainbow': {
+            0.0: 'blue',
+            0.25: 'cyan',
+            0.5: 'lime',
+            0.75: 'yellow',
+            1.0: 'red'
+        },
+        'fire': {
+            0.0: 'black',
+            0.25: 'purple',
+            0.5: 'orange',
+            0.75: 'yellow',
+            1.0: 'white'
+        },
+        'water': {
+            0.0: 'white',
+            0.25: 'lightblue',
+            0.5: 'blue',
+            0.75: 'darkblue',
+            1.0: 'black'
+        },
+        'earth': {
+            0.0: 'green',
+            0.25: 'yellowgreen',
+            0.5: 'yellow',
+            0.75: 'orange',
+            1.0: 'brown'
+        }
+    };
+    
+    if (themes[theme]) {
+        this.gradient = themes[theme];
+        this.initPalette();
+        return true;
+    }
+    return false;
+}
+
+/**
+ * 获取预设主题列表
+ */
+Intensity.prototype.getThemes = function () {
+    return ['rainbow', 'fire', 'water', 'earth'];
+}
+
+/**
+ * 更新最大最小值
+ */
+Intensity.prototype.setMinMax = function (min, max) {
+    this.min = min;
+    this.max = max;
+}
+
+/**
+ * 更新最大最小尺寸
+ */
+Intensity.prototype.setMinMaxSize = function (minSize, maxSize) {
+    this.minSize = minSize;
+    this.maxSize = maxSize;
+}
+
 Intensity.prototype.getLegend = function (options) {
     var gradient = this.gradient;
 
@@ -143,9 +224,27 @@ Intensity.prototype.getLegend = function (options) {
 
     paletteCtx.fillStyle = lineGradient;
     paletteCtx.fillRect(0, 0, width, height);
+    
+    // 添加数值标签
+    if (options.showLabels !== false) {
+        paletteCtx.fillStyle = 'black';
+        paletteCtx.font = '12px Arial';
+        paletteCtx.textAlign = 'left';
+        
+        // 添加最大值和最小值标签
+        var maxLabel = this.max.toString();
+        var minLabel = this.min.toString();
+        
+        paletteCtx.fillText(maxLabel, width + 5, 12);
+        paletteCtx.fillText(minLabel, width + 5, height);
+        
+        // 添加中间值标签
+        var midValue = (this.max + this.min) / 2;
+        var midLabel = midValue.toFixed(1);
+        paletteCtx.fillText(midLabel, width + 5, height / 2);
+    }
 
     return canvas;
 }
-
 
 export default Intensity;

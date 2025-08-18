@@ -1,7 +1,3 @@
-/**
- * @author kyle / http://nikai.us/
- */
-
 import BaseLayer from '../BaseLayer';
 import CanvasLayer from './CanvasLayer';
 import clear from '../../canvas/clear';
@@ -77,6 +73,20 @@ class Layer extends BaseLayer {
             if (this.options.methods.mousemove) {
                 map.addEventListener('mousemove', this.mousemoveEvent);
             }
+            
+            // 添加悬停事件支持
+            if (this.options.methods.hover) {
+                map.addEventListener('mouseover', this.mousemoveEvent);
+                map.addEventListener('mouseout', this.mousemoveEvent);
+            }
+            
+            // 添加双击事件支持
+            if (this.options.methods.doubleClick) {
+                map.addEventListener('dblclick', function(e) {
+                    var pixel = e.pixel;
+                    super.doubleClickEvent(pixel, e);
+                });
+            }
 
             if ('ontouchend' in window.document && this.options.methods.tap) {
                 map.addEventListener('touchstart', function (e) {
@@ -100,6 +110,15 @@ class Layer extends BaseLayer {
             }
             if (this.options.methods.mousemove) {
                 map.removeEventListener('mousemove', this.mousemoveEvent);
+            }
+            // 移除悬停事件
+            if (this.options.methods.hover) {
+                map.removeEventListener('mouseover', this.mousemoveEvent);
+                map.removeEventListener('mouseout', this.mousemoveEvent);
+            }
+            // 移除双击事件
+            if (this.options.methods.doubleClick) {
+                map.removeEventListener('dblclick', this.doubleClickEvent);
             }
         }
     }
@@ -374,6 +393,117 @@ class Layer extends BaseLayer {
         this.update({
             options: null
         });
+    }
+
+    /**
+     * 更新图层数据
+     * @param {Array|DataSet} data - 新数据
+     */
+    updateData(data) {
+        if (data instanceof DataSet) {
+            this.dataSet = data;
+        } else if (Array.isArray(data)) {
+            this.dataSet.set(data);
+        }
+        
+        // 如果是聚类图，需要刷新聚类
+        if (this.options.draw === 'cluster') {
+            this.refreshCluster(this.options);
+        }
+        
+        // 重新初始化数据范围
+        this.initDataRange(this.options);
+        
+        // 重新绘制
+        this.draw();
+    }
+
+    /**
+     * 添加数据
+     * @param {Object|Array} data - 要添加的数据
+     */
+    addData(data) {
+        this.dataSet.add(data);
+        
+        // 如果是聚类图，需要刷新聚类
+        if (this.options.draw === 'cluster') {
+            this.refreshCluster(this.options);
+        }
+        
+        // 重新初始化数据范围
+        this.initDataRange(this.options);
+        
+        // 重新绘制
+        this.draw();
+    }
+
+    /**
+     * 获取当前视图范围内的数据
+     */
+    getDataInBounds() {
+        var bounds = this.map.getBounds();
+        var ne = bounds.getNorthEast();
+        var sw = bounds.getSouthWest();
+        var boundsArray = [sw.lng, sw.lat, ne.lng, ne.lat];
+        var zoom = this.getZoom();
+        
+        if (this.options.draw === 'cluster' && (!this.options.maxClusterZoom || this.options.maxClusterZoom >= zoom)) {
+            return this.supercluster.getClusters(boundsArray, zoom);
+        } else {
+            // 简单过滤，实际应该使用更精确的方法
+            return this.dataSet.get().filter(item => {
+                if (item.geometry && item.geometry.coordinates) {
+                    var coords = item.geometry.coordinates;
+                    return coords[0] >= sw.lng && coords[0] <= ne.lng && 
+                           coords[1] >= sw.lat && coords[1] <= ne.lat;
+                }
+                return false;
+            });
+        }
+    }
+
+    /**
+     * 设置图层透明度
+     * @param {Number} opacity - 透明度值 (0-1)
+     */
+    setOpacity(opacity) {
+        if (this.canvasLayer && this.canvasLayer.canvas) {
+            this.canvasLayer.canvas.style.opacity = opacity;
+        }
+    }
+
+    /**
+     * 获取图层透明度
+     */
+    getOpacity() {
+        if (this.canvasLayer && this.canvasLayer.canvas) {
+            return parseFloat(this.canvasLayer.canvas.style.opacity) || 1;
+        }
+        return 1;
+    }
+
+    /**
+     * 切换图层可见性
+     */
+    toggle() {
+        if (this.canvasLayer && this.canvasLayer.canvas) {
+            var canvas = this.canvasLayer.canvas;
+            canvas.style.display = canvas.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    /**
+     * 获取图层状态信息
+     */
+    getLayerInfo() {
+        return {
+            zoom: this.getZoom(),
+            visible: this.canvasLayer && this.canvasLayer.canvas ? 
+                     this.canvasLayer.canvas.style.display !== 'none' : true,
+            opacity: this.getOpacity(),
+            dataCount: this.dataSet ? this.dataSet.getTotal() : 0,
+            drawType: this.options.draw
+        };
     }
 
     destroy() {

@@ -115,6 +115,8 @@ class BaseLayer {
             return this.intensity.getLegend(options);
         } else if (self.options.draw == 'category') {
             return this.category.getLegend(options);
+        } else if (self.options.draw == 'choropleth') {
+            return this.choropleth.getLegend(options);
         }
     }
 
@@ -200,7 +202,12 @@ class BaseLayer {
                 if (self.options.context == 'webgl') {
                     webglDrawSimple.draw(self.canvasLayer.canvas.getContext('webgl'), dataSet, self.options);
                 } else {
-                    drawSimple.draw(context, dataSet, self.options);
+                    // 使用增强版绘制函数
+                    if (self.options.enhancedDraw) {
+                        drawSimple.drawEnhanced(context, dataSet, self.options);
+                    } else {
+                        drawSimple.draw(context, dataSet, self.options);
+                    }
                 }
         }
 
@@ -246,6 +253,7 @@ class BaseLayer {
             }
         }
     }
+    
     // 递归获取聚合点下的所有原始点数据
     getClusterPoints(cluster) {
         if (cluster.type !== 'Feature') {
@@ -261,6 +269,113 @@ class BaseLayer {
                 }
             })
             .flat();
+    }
+
+    /**
+     * 获取指定范围内的数据点
+     * @param {Object} bounds - 地理范围边界
+     */
+    getDataInBounds(bounds) {
+        const data = this.dataSet.get();
+        const result = [];
+        
+        for (let i = 0; i < data.length; i++) {
+            const item = data[i];
+            if (item.geometry && item.geometry.coordinates) {
+                const coords = item.geometry.coordinates;
+                if (bounds.contains(coords)) {
+                    result.push(item);
+                }
+            }
+        }
+        
+        return result;
+    }
+
+    /**
+     * 根据条件过滤数据
+     * @param {Function} filter - 过滤函数
+     */
+    filterData(filter) {
+        if (typeof filter === 'function') {
+            const filteredData = this.dataSet.filter(filter);
+            return new DataSet(filteredData);
+        }
+        return this.dataSet;
+    }
+
+    /**
+     * 更新数据集
+     * @param {Array|DataSet} data - 新数据
+     */
+    updateData(data) {
+        if (data instanceof DataSet) {
+            this.dataSet = data;
+        } else if (Array.isArray(data)) {
+            this.dataSet.set(data);
+        }
+        
+        // 如果是聚类图，需要刷新聚类
+        if (this.options.draw === 'cluster') {
+            this.refreshCluster(this.options);
+        }
+        
+        // 重新初始化数据范围
+        this.initDataRange(this.options);
+        
+        // 重新绘制
+        this.draw();
+    }
+
+    /**
+     * 添加数据
+     * @param {Object|Array} data - 要添加的数据
+     */
+    addData(data) {
+        this.dataSet.add(data);
+        
+        // 如果是聚类图，需要刷新聚类
+        if (this.options.draw === 'cluster') {
+            this.refreshCluster(this.options);
+        }
+        
+        // 重新初始化数据范围
+        this.initDataRange(this.options);
+        
+        // 重新绘制
+        this.draw();
+    }
+
+    /**
+     * 清除数据
+     */
+    clearData() {
+        this.dataSet.clear();
+        
+        // 如果是聚类图，需要刷新聚类
+        if (this.options.draw === 'cluster') {
+            this.refreshCluster(this.options);
+        }
+        
+        // 重新绘制
+        this.draw();
+    }
+
+    /**
+     * 获取数据统计信息
+     */
+    getDataStats() {
+        const data = this.dataSet.get();
+        return {
+            count: data.length,
+            minX: this.dataSet.getMin('x'),
+            maxX: this.dataSet.getMax('x'),
+            minY: this.dataSet.getMin('y'),
+            maxY: this.dataSet.getMax('y'),
+            minCount: this.dataSet.getMin('count'),
+            maxCount: this.dataSet.getMax('count'),
+            avgCount: this.dataSet.getAverage('count')
+        };
     }
 
     clickEvent(pixel, e) {
@@ -295,6 +410,51 @@ class BaseLayer {
             this.options.methods.mousemove(null, e);
         }
     }
+    
+    /**
+     * 悬停事件处理
+     * @param {Object} pixel - 像素坐标
+     * @param {Event} e - 事件对象
+     */
+    hoverEvent(pixel, e) {
+        if (!this.options.methods || !this.options.methods.hover) {
+            return;
+        }
+        
+        var dataItem = this.isPointInPath(this.getContext(), pixel);
+        if (dataItem) {
+            if (this.options.draw === 'cluster') {
+                let children = this.getClusterPoints(dataItem);
+                dataItem.children = children;
+            }
+            this.options.methods.hover(dataItem, e);
+        } else {
+            this.options.methods.hover(null, e);
+        }
+    }
+    
+    /**
+     * 双击事件处理
+     * @param {Object} pixel - 像素坐标
+     * @param {Event} e - 事件对象
+     */
+    doubleClickEvent(pixel, e) {
+        if (!this.options.methods || !this.options.methods.doubleClick) {
+            return;
+        }
+        
+        var dataItem = this.isPointInPath(this.getContext(), pixel);
+        if (dataItem) {
+            if (this.options.draw === 'cluster') {
+                let children = this.getClusterPoints(dataItem);
+                dataItem.children = children;
+            }
+            this.options.methods.doubleClick(dataItem, e);
+        } else {
+            this.options.methods.doubleClick(null, e);
+        }
+    }
+
     tapEvent(pixel, e) {
         if (!this.options.methods) {
             return;
@@ -323,6 +483,28 @@ class BaseLayer {
         }
         self.init(options);
         if (isDraw !== false) {
+            self.draw();
+        }
+    }
+
+    /**
+     * 更新图层选项
+     * @param {Object} options - 新选项
+     * @param {Boolean} redraw - 是否重绘
+     */
+    updateOptions(options, redraw = true) {
+        var self = this;
+        for (var key in options) {
+            self.options[key] = options[key];
+        }
+        
+        // 如果修改了与数据范围相关的选项，需要重新初始化
+        if (options.max !== undefined || options.min !== undefined || 
+            options.gradient !== undefined || options.splitList !== undefined) {
+            self.initDataRange(self.options);
+        }
+        
+        if (redraw) {
             self.draw();
         }
     }
@@ -396,6 +578,60 @@ class BaseLayer {
         if (this.isEnabledTime() && this.animator) {
             this.animator.start();
         }
+    }
+    
+    /**
+     * 导出数据为GeoJSON格式
+     */
+    toGeoJSON() {
+        const data = this.dataSet.get();
+        const geojson = {
+            type: "FeatureCollection",
+            features: []
+        };
+        
+        data.forEach(item => {
+            if (item.geometry) {
+                geojson.features.push({
+                    type: "Feature",
+                    properties: Object.assign({}, item),
+                    geometry: item.geometry
+                });
+            }
+        });
+        
+        return geojson;
+    }
+    
+    /**
+     * 导出数据为CSV格式
+     */
+    toCSV() {
+        const data = this.dataSet.get();
+        if (data.length === 0) return "";
+        
+        // 获取所有属性名作为表头
+        const headers = Object.keys(data[0]).filter(key => key !== 'geometry');
+        let csv = headers.join(',') + '\n';
+        
+        // 添加数据行
+        data.forEach(item => {
+            const row = headers.map(header => {
+                let value = item[header];
+                // 如果是数组或对象，转换为JSON字符串
+                if (typeof value === 'object') {
+                    value = JSON.stringify(value);
+                }
+                // 转义包含逗号或引号的值
+                if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+                    value = '"' + value.replace(/"/g, '""') + '"';
+                }
+                return value;
+            });
+            csv += row.join(',') + '\n';
+        });
+        
+        return csv;
     }
 }
 

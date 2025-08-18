@@ -58,6 +58,69 @@ Category.prototype.generateByDataSet = function (dataSet, color) {
     this.splitList['other'] = colors[colors.length - 1];
 }
 
+/**
+ * 根据唯一值自动生成splitList
+ */
+Category.prototype.generateByUniqueValues = function (dataSet, columnName, colors) {
+    var uniqueValues = dataSet.getUnique(columnName);
+    var colorArray = colors || this.getDefaultColors();
+    
+    this.splitList = {};
+    for (var i = 0; i < uniqueValues.length; i++) {
+        this.splitList[uniqueValues[i]] = colorArray[i % colorArray.length];
+    }
+    this.splitList['other'] = colorArray[colorArray.length - 1];
+}
+
+/**
+ * 获取默认颜色列表
+ */
+Category.prototype.getDefaultColors = function () {
+    return [
+        'rgba(255, 255, 0, 0.8)', 
+        'rgba(253, 98, 104, 0.8)', 
+        'rgba(255, 146, 149, 0.8)', 
+        'rgba(255, 241, 193, 0.8)', 
+        'rgba(110, 176, 253, 0.8)', 
+        'rgba(52, 139, 251, 0.8)', 
+        'rgba(17, 102, 252, 0.8)',
+        'rgba(0, 176, 104, 0.8)',
+        'rgba(128, 128, 128, 0.8)',
+        'rgba(255, 0, 255, 0.8)'
+    ];
+}
+
+/**
+ * 添加新的分类规则
+ */
+Category.prototype.addCategory = function (key, value) {
+    this.splitList[key] = value;
+}
+
+/**
+ * 移除分类规则
+ */
+Category.prototype.removeCategory = function (key) {
+    delete this.splitList[key];
+}
+
+/**
+ * 更新分类规则
+ */
+Category.prototype.updateCategory = function (key, value) {
+    if (this.splitList[key] !== undefined) {
+        this.splitList[key] = value;
+        return true;
+    }
+    return false;
+}
+
+/**
+ * 获取所有分类规则
+ */
+Category.prototype.getCategories = function () {
+    return this.splitList;
+}
 
 Category.prototype.getLegend = function (options) {
     var splitList = this.splitList;
