@@ -8,11 +8,13 @@ const imageMap = {};
 let stacks = {};
 export default {
     draw: function (context, dataSet, options) {
+        // 保存当前画布状态
         context.save();
+        // 获取数据集，如果是DataSet实例则调用get()方法获取，否则直接使用
         const data = dataSet instanceof DataSet ? dataSet.get() : dataSet;
         for (let i = 0; i < data.length; i++) {
             let item = data[i];
-            let coordinates = item.geometry._coordinates || item.geometry.coordinates;
+            // 开始一个新的绘制路径
             context.beginPath();
             if (item.properties && item.properties.cluster) {
                 // 增强聚类点绘制功能
@@ -31,49 +33,50 @@ export default {
      * @param {*} context 画布上下文
      */
     drawClusterPoint: function (item, options, context) {
-        let coordinates = item.geometry._coordinates || item.geometry.coordinates;
-        let x = coordinates[0];
-        let y = coordinates[1];
-
-        // 获取标签配置
-        let labelOptions = Object.assign({}, options.label || {});
-
-        // 绘制聚类圆形
-        context.beginPath();
-        context.arc(x, y, item.size, 0, Math.PI * 2);
-        context.fillStyle = item.fillStyle || 'rgba(200, 0, 0, 0.8)';
-        context.fill();
-
-        // 绘制边框
-        context.strokeStyle = 'rgba(255, 255, 255, 1)';
-        context.lineWidth = 1;
-        context.stroke();
-
-        // 绘制标签文字
-        if (labelOptions.show !== false) {
-            context.fillStyle = labelOptions.fillStyle || 'white';
-            context.textAlign = 'center';
-            context.textBaseline = 'middle';
-
-            if (labelOptions.font) {
-                context.font = labelOptions.font;
-            } else {
-                context.font = 'bold 14px Arial';
+        //if判断为新增, 即如果显示聚合点且聚合点的iconOptions.show === true,则显示图像
+        if (options.label && options.label.iconOptions && options.show !== false && options.label.iconOptions.show) {
+            this.drawSeanIcon(item, options.label, context);
+        } else {
+            // 获取元素的坐标
+            let coordinates = item.geometry._coordinates || item.geometry.coordinates;
+            let x = coordinates[0];
+            let y = coordinates[1];
+            // 获取标签配置
+            let labelOptions = Object.assign({}, options.label || {});
+            // 绘制聚类圆形
+            context.beginPath();
+            context.arc(x, y, item.size, 0, Math.PI * 2);
+            context.fillStyle = item.fillStyle || 'rgba(200, 0, 0, 0.8)';
+            context.fill();
+            // 绘制边框
+            context.strokeStyle = 'rgba(255, 255, 255, 1)';
+            context.lineWidth = 1;
+            context.stroke();
+            // 绘制标签文字
+            if (labelOptions.show !== false) {
+                context.fillStyle = labelOptions.fillStyle || 'white';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                // 设置字体样式
+                if (labelOptions.font) {
+                    context.font = labelOptions.font;
+                } else {
+                    context.font = 'bold 14px Arial';
+                }
+                // 设置阴影颜色
+                if (labelOptions.shadowColor) {
+                    context.shadowColor = labelOptions.shadowColor;
+                }
+                // 设置阴影模糊程度
+                if (labelOptions.shadowBlur) {
+                    context.shadowBlur = labelOptions.shadowBlur;
+                }
+                // 获取标签文本
+                let text = item.properties.point_count.toString();
+                let textWidth = context.measureText(text).width;
+                // 绘制文本
+                context.fillText(text, x + 0.5 - textWidth / 2, y + 0.5 + 3);
             }
-
-            if (labelOptions.shadowColor) {
-                context.shadowColor = labelOptions.shadowColor;
-            }
-
-            if (labelOptions.shadowBlur) {
-                context.shadowBlur = labelOptions.shadowBlur;
-            }
-
-            let text = item.properties.point_count.toString();
-            let textWidth = context.measureText(text).width;
-
-            // 支持文字垂直居中
-            context.fillText(text, x, y);
         }
     },
     /**
@@ -242,7 +245,7 @@ export default {
                 context.textAlign = 'center';      // 水平居中
 
                 // 动态字体大小（根据聚合点数量调整）
-                const pointCount = item.properties?.point_count || 0;
+                const pointCount = (item.properties && item.properties.point_count) || 0;
                 // 修改为图标大小的一半
                 const fontSize = options.iconOptions.fontSize || Math.floor(iconWidth / 6);
                 context.font = `${fontSize}px Arial`; // 使用 normal 字体样式
@@ -316,7 +319,7 @@ export default {
                         context.textAlign = 'center';      // 水平居中
 
                         // 动态字体大小（根据聚合点数量调整）
-                        const pointCount = item.properties?.point_count || 0;
+                        const pointCount = (item.properties && item.properties.point_count) || 0;
                         // 修改为图标大小的一半
                         const fontSize = options.iconOptions.fontSize || Math.floor(iconWidth / 6);
                         context.font = `${fontSize}px Arial`; // 使用 normal 字体样式

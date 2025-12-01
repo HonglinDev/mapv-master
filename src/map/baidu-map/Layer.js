@@ -16,6 +16,7 @@ class Layer extends BaseLayer {
         this.clickEvent = this.clickEvent.bind(this);
         this.mousemoveEvent = this.mousemoveEvent.bind(this);
         this.tapEvent = this.tapEvent.bind(this);
+        this.doubleClickEvent = this.doubleClickEvent.bind(this);
 
         self.init(options);
         self.argCheck(options);
@@ -59,6 +60,11 @@ class Layer extends BaseLayer {
         super.tapEvent(pixel, e);
     }
 
+    doubleClickEvent(e) {
+        var pixel = e.pixel;
+        super.doubleClickEvent(pixel, e);
+    }
+
     bindEvent(e) {
         this.unbindEvent();
         var map = this.map;
@@ -82,10 +88,7 @@ class Layer extends BaseLayer {
             
             // 添加双击事件支持
             if (this.options.methods.doubleClick) {
-                map.addEventListener('dblclick', function(e) {
-                    var pixel = e.pixel;
-                    super.doubleClickEvent(pixel, e);
-                });
+                map.addEventListener('dblclick', this.doubleClickEvent);
             }
 
             if ('ontouchend' in window.document && this.options.methods.tap) {
