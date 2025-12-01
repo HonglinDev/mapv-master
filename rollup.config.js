@@ -1,9 +1,9 @@
-import babel from 'rollup-plugin-babel';
+import typescript from 'rollup-plugin-typescript2';
 
 export default {
-	entry: 'index.js',
+	input: 'index.js',
 	format: 'umd',
-	moduleName: 'mapv',
+	name: 'mapv',
 	external: [
 		'maptalks',
 		'openlayers',
@@ -15,9 +15,14 @@ export default {
     maptalks: 'maptalks'
   },
 	plugins: [
-		babel({
-			runtimeHelpers: true
+		typescript({
+			tsconfig: './tsconfig.json',
+			useTsconfigDeclarationDir: true
 		})
 	],
-	dest: 'build/mapv.js'
+	output: {
+		file: 'build/mapv.js',
+		format: 'umd',
+		name: 'mapv'
+	}
 }

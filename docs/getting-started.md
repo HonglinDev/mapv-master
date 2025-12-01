@@ -1,27 +1,39 @@
-# 快速开始
-
 ## 安装
 
 ### NPM 安装
 
-如果你使用 NPM 开发环境，可使用 NPM 安装，MapV 能很好地和诸如 Webpack、Browserify 或 fis 的 CommonJS 模块打包器配合使用。
-
 ```bash
 npm install mapv
+```
+### CDN 引入
+```bash
+<script src="https://cdn.jsdelivr.net/npm/mapv/dist/mapv.min.js"></script>
+```
+### 基本用法
+```bash
+// 创建数据集
+var data = [
+  {
+    geometry: {
+      type: 'Point',
+      coordinates: [116.405285, 39.904989]
+    },
+    count: 100
+  }
+];
+
+var dataSet = new mapv.DataSet(data);
+
+// 创建图层
+var options = {
+  fillStyle: 'rgba(50, 50, 255, 0.6)',
+  draw: 'simple'
+};
+
+var mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+```
 
 
-如果您需要修改build/mapv.js中的功能，应该根据具体需求修改对应的源文件：
+### 支持环境
 
-修改工具函数 - 直接修改src/canvas/目录下的相应文件
-修改绘制功能 - 修改src/canvas/draw/或src/webgl/draw/目录下的相应文件
-
-修改数据处理 - 修改src/data/DataSet.js
-
-修改数据范围处理 - 修改src/utils/data-range/目录下的相应文件
-
-
-修改图层基础功能 - 修改src/map/BaseLayer.js
-
-
-修改特定地图适配器 - 修改src/map/下相应目录的文件
-修改完成后，需要运行构建命令重新生成build/mapv.js文件。
+MapV 使用 Canvas 开发，支持现代浏览器（IE8以上版本）。

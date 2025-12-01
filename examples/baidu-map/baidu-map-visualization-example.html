@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百度地图可视化示例</title>
+    <!-- 加载百度地图API -->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=v87ZLCsZWK6Lh9GNS3WQiGOuCMldqiCT"></script>
+    <!-- 加载MapV库 -->
+    <script type="text/javascript" src="../../build/mapv.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        #map-container {
+            width: 100%;
+            height: 600px;
+        }
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        button {
+            margin: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #info {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map-container"></div>
+    <div id="controls">
+        <h3>可视化控制</h3>
+        <button onclick="drawSimple()">简单点图</button>
+        <button onclick="drawHeatmap()">热力图</button>
+        <button onclick="drawGrid()">网格图</button>
+        <button onclick="clearLayer()">清除图层</button>
+    </div>
+    <div id="info">
+        <h3>地图信息</h3>
+        <p>中心点：<span id="center"></span></p>
+        <p>缩放级别：<span id="zoom"></span></p>
+        <p>点击位置：<span id="click"></span></p>
+    </div>
+
+    <script>
+        // 全局变量
+        var map;
+        var mapvLayer;
+        var dataSet;
+
+        // 初始化地图
+        function initMap() {
+            // 创建地图实例
+            map = new BMap.Map("map-container");
+            // 设置中心点和缩放级别
+            var point = new BMap.Point(116.404, 39.915);
+            map.centerAndZoom(point, 11);
+
+            // 添加控件
+            map.addControl(new BMap.NavigationControl()); // 缩放控件
+            map.addControl(new BMap.ScaleControl()); // 比例尺控件
+            map.addControl(new BMap.OverviewMapControl()); // 缩略图控件
+            map.addControl(new BMap.MapTypeControl()); // 地图类型控件
+
+            // 启用滚轮缩放
+            map.enableScrollWheelZoom(true);
+
+            // 更新地图信息
+            updateMapInfo();
+
+            // 添加事件监听
+            map.addEventListener("click", function(e) {
+                document.getElementById("click").innerHTML = e.point.lng + ", " + e.point.lat;
+            });
+
+            map.addEventListener("zoomend", function() {
+                updateMapInfo();
+            });
+
+            map.addEventListener("dragend", function() {
+                updateMapInfo();
+            });
+
+            // 初始化数据集
+            initDataSet();
+        }
+
+        // 更新地图信息
+        function updateMapInfo() {
+            var center = map.getCenter();
+            var zoom = map.getZoom();
+            document.getElementById("center").innerHTML = center.lng + ", " + center.lat;
+            document.getElementById("zoom").innerHTML = zoom;
+        }
+
+        // 初始化数据集
+        function initDataSet() {
+            // 创建示例数据
+            var data = [];
+            var randomCount = 1000;
+            for (var i = 0; i < randomCount; i++) {
+                var cityCenter = map.getCenter();
+                var randomX = Math.random() * 50 - 25;
+                var randomY = Math.random() * 50 - 25;
+                data.push({
+                    geometry: {
+                        type: "Point",
+                        coordinates: [cityCenter.lng + randomX / 100, cityCenter.lat + randomY / 100]
+                    },
+                    count: Math.random() * 100
+                });
+            }
+            dataSet = new mapv.DataSet(data);
+        }
+
+        // 绘制简单点图
+        function drawSimple() {
+            clearLayer();
+            var options = {
+                fillStyle: 'rgba(50, 50, 255, 0.6)',
+                strokeStyle: 'rgba(0, 0, 255, 0.8)',
+                lineWidth: 1,
+                draw: 'simple',
+                size: 5,
+                label: {
+                    show: true,
+                    fillStyle: 'white',
+                    font: '12px Arial',
+                    offsetX: 0,
+                    offsetY: -10
+                }
+            };
+            mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+        }
+
+        // 绘制热力图
+        function drawHeatmap() {
+            clearLayer();
+            var options = {
+                fillStyle: 'rgba(50, 50, 255, 0.6)',
+                draw: 'heatmap',
+                size: 10,
+                gradient: {
+                    0.25: 'rgb(0, 0, 255)',
+                    0.55: 'rgb(0, 255, 0)',
+                    0.85: 'yellow',
+                    1.0: 'rgb(255, 0, 0)'
+                },
+                maxOpacity: 0.8,
+                minOpacity: 0
+            };
+            mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+        }
+
+        // 绘制网格图
+        function drawGrid() {
+            clearLayer();
+            var options = {
+                fillStyle: 'rgba(50, 50, 255, 0.6)',
+                draw: 'grid',
+                size: 50,
+                gridSize: 50,
+                label: {
+                    show: true,
+                    fillStyle: 'white',
+                    font: '12px Arial'
+                }
+            };
+            mapvLayer = new mapv.baiduMapLayer(map, dataSet, options);
+        }
+
+        // 清除图层
+        function clearLayer() {
+            if (mapvLayer) {
+                mapvLayer.destroy();
+                mapvLayer = null;
+            }
+        }
+
+        // 页面加载完成后初始化地图
+        window.onload = function() {
+            initMap();
+        };
+    </script>
+</body>
+</html>

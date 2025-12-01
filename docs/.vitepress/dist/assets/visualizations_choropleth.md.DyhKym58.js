@@ -1,0 +1,1 @@
+import{_ as t,c as e,o}from"./chunks/framework.CQuhCYrb.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"visualizations/choropleth.md","filePath":"visualizations/choropleth.md"}'),a={name:"visualizations/choropleth.md"};function r(s,c,i,n,p,l){return o(),e("div")}const d=t(a,[["render",r]]);export{_ as __pageData,d as default};

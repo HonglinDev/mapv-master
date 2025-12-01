@@ -1,0 +1,1 @@
+import{_ as t,c as a,o as e}from"./chunks/framework.CQuhCYrb.js";const f=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/baidu.md","filePath":"platforms/baidu.md"}'),r={name:"platforms/baidu.md"};function o(s,c,n,d,i,p){return e(),a("div")}const _=t(r,[["render",o]]);export{f as __pageData,_ as default};

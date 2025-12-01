@@ -1,33 +1,15 @@
+<!--
+ * @Author: 李红林 1770679549@qq.com
+ * @Date: 2025-08-25 17:01:48
+ * @LastEditors: 李红林 1770679549@qq.com
+ * @LastEditTime: 2025-12-01 17:00:29
+ * @FilePath: \mapv-master\docs\index.md
+ * @Description: 
+ * 
+-->
 # MapV 使用文档
 
 MapV 是一款地理信息可视化开源库，可以用来展示大量地理信息数据，点、线、面的数据，每种数据也有不同的展示类型，如直接打点、热力图、网格、聚合等方式展示数据。
-
-## 目录
-
-- [快速开始](./getting-started.md)
-- [更新日志](./CHANGELOG.md)
-- [API 参考](./api/)
-  - [数据集 (DataSet)](./api/dataset.md)
-  - [图层 (Layers)](./api/layers.md)
-  - [工具类 (Utils)](./api/utils.md)
-- [平台适配器](./platforms/)
-  - [百度地图](./platforms/baidu.md)
-  - [高德地图](./platforms/amap.md)
-  - [谷歌地图](./platforms/google.md)
-  - [Leaflet](./platforms/leaflet.md)
-  - [OpenLayers](./platforms/openlayers.md)
-  - [MapTalks](./platforms/maptalks.md)
-  - [Cesium](./platforms/cesium.md)
-- [可视化类型](./visualizations/)
-  - [简单点图 (Simple)](./visualizations/simple.md)
-  - [气泡图 (Bubble)](./visualizations/bubble.md)
-  - [热力图 (Heatmap)](./visualizations/heatmap.md)
-  - [网格图 (Grid)](./visualizations/grid.md)
-  - [蜂窝图 (Honeycomb)](./visualizations/honeycomb.md)
-  - [强度图 (Intensity)](./visualizations/intensity.md)
-  - [分类图 (Category)](./visualizations/category.md)
-  - [ choropleth 图 (Choropleth)](./visualizations/choropleth.md)
-- [示例](./examples/)
 
 ## 简介
 

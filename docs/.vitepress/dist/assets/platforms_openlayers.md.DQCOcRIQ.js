@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as a}from"./chunks/framework.CQuhCYrb.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/openlayers.md","filePath":"platforms/openlayers.md"}'),r={name:"platforms/openlayers.md"};function o(s,n,p,c,l,m){return a(),t("div")}const d=e(r,[["render",o]]);export{_ as __pageData,d as default};
