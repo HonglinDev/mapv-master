@@ -1,1 +1,0 @@
-import{_ as t,c as a,o as e}from"./chunks/framework.CQuhCYrb.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/maptalks.md","filePath":"platforms/maptalks.md"}'),s={name:"platforms/maptalks.md"};function r(o,p,m,c,n,l){return e(),a("div")}const d=t(s,[["render",r]]);export{_ as __pageData,d as default};

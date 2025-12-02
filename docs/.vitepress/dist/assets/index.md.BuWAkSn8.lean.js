@@ -1,1 +1,0 @@
-import{_ as a,c as i,o as n,ag as l}from"./chunks/framework.CQuhCYrb.js";const F=JSON.parse('{"title":"MapV 使用文档","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),e={name:"index.md"};function p(t,s,h,r,k,d){return n(),i("div",null,[...s[0]||(s[0]=[l("",17)])])}const c=a(e,[["render",p]]);export{F as __pageData,c as default};

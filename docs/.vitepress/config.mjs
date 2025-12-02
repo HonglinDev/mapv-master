@@ -2,7 +2,7 @@
  * @Author: 李红林 1770679549@qq.com
  * @Date: 2025-12-01 16:03:26
  * @LastEditors: 李红林 1770679549@qq.com
- * @LastEditTime: 2025-12-01 17:46:54
+ * @LastEditTime: 2025-12-02 10:55:27
  * @FilePath: \mapv-master\docs\.vitepress\config.mjs
  * @Description: 
  * 
@@ -31,7 +31,8 @@ export default defineConfig({
       { text: '平台适配器', link: '/platforms/baidu' },
       { text: '可视化类型', link: '/visualizations/simple' },
       { text: '示例', link: '/examples/basic' },
-      { text: '更新日志', link: '/CHANGELOG' }
+      { text: '更新日志', link: '/CHANGELOG' },
+      { text: '样式示例', link: '/custom-style-example' }
     ],
     sidebar: {
       '/api/': [

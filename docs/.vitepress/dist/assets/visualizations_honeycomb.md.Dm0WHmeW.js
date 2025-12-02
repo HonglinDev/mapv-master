@@ -1,1 +1,0 @@
-import{_ as e,c as o,o as t}from"./chunks/framework.CQuhCYrb.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"visualizations/honeycomb.md","filePath":"visualizations/honeycomb.md"}'),a={name:"visualizations/honeycomb.md"};function n(s,c,i,r,m,p){return t(),o("div")}const l=e(a,[["render",n]]);export{d as __pageData,l as default};

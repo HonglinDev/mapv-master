@@ -1,0 +1,260 @@
+/* 文档自定义样式完整案例 */
+
+/* 1. 字体样式 */
+:root {
+  /* 字体类型 */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-family-heading: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-family-code: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+    Courier, monospace;
+
+  /* 字体大小 */
+  --font-size-base: 16px;
+  --font-size-sm: 14px;
+  --font-size-lg: 18px;
+  --font-size-xl: 20px;
+
+  /* 字体颜色 */
+  --text-color-primary: #333333;
+  --text-color-secondary: #666666;
+  --text-color-muted: #999999;
+  --text-color-link: #409eff;
+  --text-color-link-hover: #66b1ff;
+}
+
+/* 2. 段落格式 */
+.vp-doc p {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.8;
+  margin-bottom: 1.5em;
+  text-align: justify;
+  color: var(--text-color-primary);
+}
+
+/* 3. 标题层级样式 */
+.vp-doc h1 {
+  font-family: var(--font-family-heading);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 1.5em 0 0.8em;
+  color: var(--text-color-primary);
+  border-bottom: 3px solid #409eff;
+  padding-bottom: 0.3em;
+}
+
+.vp-doc h2 {
+  font-family: var(--font-family-heading);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 1.2em 0 0.6em;
+  color: var(--text-color-primary);
+  border-bottom: 2px solid #eaecef;
+  padding-bottom: 0.2em;
+}
+
+.vp-doc h3 {
+  font-family: var(--font-family-heading);
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 1em 0 0.5em;
+  color: var(--text-color-primary);
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.2em;
+}
+
+.vp-doc h4 {
+  font-family: var(--font-family-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0.8em 0 0.4em;
+  color: var(--text-color-primary);
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.2em;
+}
+
+.vp-doc h5 {
+  font-family: var(--font-family-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0.6em 0 0.3em;
+  color: var(--text-color-primary);
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.2em;
+}
+
+.vp-doc h6 {
+  font-family: var(--font-family-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.5em 0 0.2em;
+  color: var(--text-color-primary);
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.2em;
+}
+
+/* 4. 列表样式 */
+/* 无序列表 */
+.vp-doc ul {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.8;
+  margin: 0 0 1.5em 1.5em;
+  padding-left: 1em;
+}
+
+.vp-doc ul li {
+  margin-bottom: 0.5em;
+  position: relative;
+}
+
+.vp-doc ul li::marker {
+  color: #409eff;
+  font-size: 1.2em;
+}
+
+/* 有序列表 */
+.vp-doc ol {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.8;
+  margin: 0 0 1.5em 1.5em;
+  padding-left: 1em;
+}
+
+.vp-doc ol li {
+  margin-bottom: 0.5em;
+}
+
+.vp-doc ol li::marker {
+  color: #409eff;
+  font-weight: 600;
+}
+
+/* 嵌套列表 */
+.vp-doc ul ul,
+.vp-doc ul ol,
+.vp-doc ol ul,
+.vp-doc ol ol {
+  margin: 0.5em 0 0.5em 1.5em;
+}
+
+/* 5. 表格样式 */
+.vp-doc table {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+.vp-doc th {
+  background-color: #409eff;
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border: 1px solid #eaecef;
+}
+
+.vp-doc td {
+  padding: 12px 16px;
+  border: 1px solid #eaecef;
+  color: var(--text-color-primary);
+}
+
+.vp-doc tr:nth-child(even) {
+  background-color: #f5f7fa;
+}
+
+.vp-doc tr:hover {
+  background-color: #ecf5ff;
+}
+
+/* 7. 代码块样式 */
+.vp-doc code {
+  font-family: var(--font-family-code);
+  font-size: 0.9em;
+  background-color: #f5f7fa;
+  color: #e74c3c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #eaecef;
+}
+
+.vp-doc pre {
+  font-family: var(--font-family-code);
+  font-size: 0.9em;
+  background-color: #fafafa;
+  border: 1px solid #eaecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 1.5em 0;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.vp-doc pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border: none;
+}
+
+/* 8. 引用样式 */
+.vp-doc blockquote {
+  margin: 1.5em 0;
+  padding: 16px 24px;
+  background-color: #f5f7fa;
+  border-left: 4px solid #409eff;
+  border-radius: 4px;
+  color: var(--text-color-secondary);
+}
+
+.vp-doc blockquote p {
+  margin: 0;
+}
+
+/* 9. 链接样式 */
+.vp-doc a {
+  color: var(--text-color-link);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.vp-doc a:hover {
+  color: var(--text-color-link-hover);
+  text-decoration: underline;
+}
+
+/* 10. 强调样式 */
+.vp-doc strong {
+  font-weight: 600;
+  color: var(--text-color-primary);
+}
+
+.vp-doc em {
+  font-style: italic;
+  color: var(--text-color-secondary);
+}
+
+/* 11. 分隔线样式 */
+.vp-doc hr {
+  margin: 2em 0;
+  border: none;
+  border-top: 1px solid #eaecef;
+}
+
+/* 12. 图片样式 */
+.vp-doc img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,67 @@
+/**
+导航栏样式
+*/
+.VPNav {
+  .VPNavBar {
+    border-bottom: 1px solid #eaecef;
+
+    .wrapper {
+      .container {
+        max-width: 100% !important;
+
+        .content {
+          padding-left: 280px !important;
+          padding-right: 32px !important;
+        }
+
+        .title {
+          padding: 0 !important;
+          width: 280px !important;
+          background-color: #ffffff;
+        }
+
+        /* 正确选择器：同时有 VPNavBarTitle 和 has-sidebar 类 */
+        .VPNavBarTitle.has-sidebar {
+          width: 280px !important;
+          .title {
+            padding-left: 32px !important;
+            width: 280px !important;
+          }
+        }
+      }
+    }
+    /* 导航栏底部下划线 */
+    .divider {
+      padding-left: 310px !important;
+    }
+  }
+}
+/**默认布局 */
+.VPDoc {
+  padding: 0 32px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.VPDoc .container {
+  margin: 0 !important;
+}
+
+/* 左侧侧边栏 */
+.VPSidebar {
+  padding-left: 32px !important;
+  width: 280px !important;
+  max-width: 280px !important;
+  background-color: #ffffff !important;
+}
+
+.VPDoc.has-aside .content-container {
+  max-width: 1488px !important;
+}
+
+/**
+中间内容 
+*/
+.VPContent {
+  padding-left: 280px !important;
+}

@@ -1,1 +1,0 @@
-import{_ as e,c as a,o as t}from"./chunks/framework.CQuhCYrb.js";const i=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"examples/advanced.md","filePath":"examples/advanced.md"}'),c={name:"examples/advanced.md"};function n(s,d,r,o,p,m){return t(),a("div")}const l=e(c,[["render",n]]);export{i as __pageData,l as default};
