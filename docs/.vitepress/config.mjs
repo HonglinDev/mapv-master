@@ -2,7 +2,7 @@
  * @Author: 李红林 1770679549@qq.com
  * @Date: 2025-12-01 16:03:26
  * @LastEditors: 李红林 1770679549@qq.com
- * @LastEditTime: 2025-12-02 10:55:27
+ * @LastEditTime: 2025-12-03 17:43:58
  * @FilePath: \mapv-master\docs\.vitepress\config.mjs
  * @Description: 
  * 
@@ -19,7 +19,8 @@ export default defineConfig({
     lastUpdatedText: "最近更新时间",
     docFooter: { prev: '上一篇', next: '下一篇' },
     outline: {
-      label: '页面导航'  // 改为中文
+      label: '页面导航',  // 改为中文
+      level: [2, 3]  // 显示h2和h3标题
     },
     darkModeSwitchLabel: '切换主题',
     lightModeSwitchTitle: '切换到浅色模式',
@@ -28,16 +29,17 @@ export default defineConfig({
       { text: '首页', link: '/' },
       { text: '快速开始', link: '/getting-started' },
       { text: 'API参考', link: '/api/dataset' },
+      { text: '常见问题', link: '/problem/faq' },
       { text: '平台适配器', link: '/platforms/baidu' },
       { text: '可视化类型', link: '/visualizations/simple' },
       { text: '示例', link: '/examples/basic' },
       { text: '更新日志', link: '/CHANGELOG' },
-      { text: '样式示例', link: '/custom-style-example' }
     ],
     sidebar: {
       '/api/': [
         {
-          text: 'API参考', items: [
+          text: 'API参考',
+          items: [
             { text: '数据集 (DataSet)', link: '/api/dataset' },
             { text: '图层 (Layers)', link: '/api/layers' },
             { text: '工具类 (Utils)', link: '/api/utils' }
@@ -54,6 +56,14 @@ export default defineConfig({
             { text: 'OpenLayers', link: '/platforms/openlayers' },
             { text: 'MapTalks', link: '/platforms/maptalks' },
             { text: 'Cesium', link: '/platforms/cesium' }
+          ]
+        }
+      ],
+      '/problem/': [
+        {
+          text: '常见问题', items: [
+            { text: '常见问题解答', link: '/problem/faq' },
+            { text: '地图使用限制说明', link: '/problem/limitations' }
           ]
         }
       ],

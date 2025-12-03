@@ -1,7 +1,3 @@
-/**
- * @author kyle / http://nikai.us/
- */
-
 import Event from "../utils/Event";
 import cityCenter from "../utils/cityCenter";
 
@@ -54,25 +50,32 @@ export default class DataSet {
     private _data: DataItem[];
     private _dataCache: DataItem[];
 
+    /**
+     * 构造函数
+     * @param data 初始数据，可以是单个数据项或数据项数组
+     * @param options 数据集配置选项
+     */
     constructor(data?: DataItem | DataItem[], options?: DataSetOptions) {
         (Event as any).bind(this)();
 
         this._options = options || {};
-        this._data = []; // map with data indexed by id
+        this._data = []; // 存储数据的数组
         this._dataCache = [];
 
-        // add initial data when provided
+        // 提供初始数据时添加数据
         if (data) {
             this.add(data);
         }
     }
 
     /**
-     * Add data.
+     * 添加数据
+     * @param data 要添加的数据，可以是单个数据项或数据项数组
+     * @param senderId 发送者ID（预留参数）
      */
     add(data: DataItem | DataItem[], senderId?: any): void {
         if (Array.isArray(data)) {
-            // Array
+            // 处理数组数据
             for (let i = 0, len = data.length; i < len; i++) {
                 if (data[i]) {
                     if (data[i].time && typeof data[i].time === 'string') {
@@ -85,33 +88,34 @@ export default class DataSet {
                 }
             }
         } else if (typeof data === 'object' && data !== null) {
-            // Single item
+            // 处理单个数据项
             this._data.push(data);
         } else {
-            throw new Error('Unknown dataType');
+            throw new Error('未知的数据类型');
         }
 
         this._dataCache = JSON.parse(JSON.stringify(this._data));
     }
 
+    /**
+     * 重置数据到初始状态
+     */
     reset(): void {
         this._data = JSON.parse(JSON.stringify(this._dataCache));
     }
 
     /**
-     * get data.
+     * 获取数据
+     * @param args 参数配置
+     * @returns 处理后的数据数组
      */
     get(args?: DataSetGetArgs): DataItem[] {
         args = args || {};
 
-        //console.time('copy data time')
-        const start = new Date();
-        // TODO: 不修改原始数据，在数据上挂载新的名称，每次修改数据直接修改新名称下的数据，可以省去deepCopy
-        // var data = deepCopy(this._data);
+        // 获取数据引用
         let data = this._data;
 
-        const startTransfer = new Date();
-
+        // 应用过滤条件
         if (args.filter) {
             const newData: DataItem[] = [];
             for (let i = 0; i < data.length; i++) {
@@ -122,17 +126,17 @@ export default class DataSet {
             data = newData;
         }
 
+        // 转换坐标
         if (args.transferCoordinate) {
             data = this.transferCoordinate(data, args.transferCoordinate, args.fromColumn, args.toColumn);
         }
-
-        // console.timeEnd('transferCoordinate time')
 
         return data;
     }
 
     /**
-     * set data.
+     * 设置数据
+     * @param data 要设置的数据，可以是单个数据项或数据项数组
      */
     set(data: DataItem | DataItem[]): void {
         this._set(data);
@@ -140,7 +144,8 @@ export default class DataSet {
     }
 
     /**
-     * set data.
+     * 内部设置数据方法
+     * @param data 要设置的数据，可以是单个数据项或数据项数组
      */
     private _set(data: DataItem | DataItem[]): void {
         this.clear();
@@ -148,24 +153,20 @@ export default class DataSet {
     }
 
     /**
-     * clear data.
+     * 清空数据
+     * @param args 参数配置（预留）
      */
     clear(args?: any): void {
-        this._data = []; // map with data indexed by id
+        this._data = []; // 清空数据数组
     }
 
     /**
-     * remove data.
-     */
-    remove(args?: any): void {}
-
-    /**
-     * update data.
+     * 更新数据
+     * @param cbk 更新回调函数
+     * @param condition 更新条件
      */
     update(cbk: (item: DataItem) => void, condition?: DataSetUpdateCondition): void {
         const data = this._data;
-
-        let item: DataItem | null = null;
         for (let i = 0; i < data.length; i++) {
             if (condition) {
                 let flag = true;
@@ -188,7 +189,12 @@ export default class DataSet {
     }
 
     /**
-     * transfer coordinate.
+     * 转换坐标
+     * @param data 要转换的数据数组
+     * @param transferFn 坐标转换函数
+     * @param fromColumn 源坐标列名
+     * @param toColumnName 目标坐标列名
+     * @returns 转换后的数据数组
      */
     transferCoordinate(data: DataItem[], transferFn: (coordinate: Coordinate) => Coordinate, fromColumn?: string, toColumnName?: string): DataItem[] {
         toColumnName = toColumnName || '_coordinates';
@@ -230,6 +236,12 @@ export default class DataSet {
         return data;
     }
 
+    /**
+     * 处理多边形坐标转换
+     * @param coordinates 多边形坐标数组
+     * @param transferFn 坐标转换函数
+     * @returns 转换后的多边形坐标数组
+     */
     private getPolygon(coordinates: PolygonCoordinates, transferFn: (coordinate: Coordinate) => Coordinate): PolygonCoordinates {
         const newCoordinates: PolygonCoordinates = [];
         for (let c = 0; c < coordinates.length; c++) {
@@ -243,6 +255,10 @@ export default class DataSet {
         return newCoordinates;
     }
 
+    /**
+     * 初始化几何信息
+     * @param transferFn 自定义几何转换函数
+     */
     initGeometry(transferFn?: (item: DataItem) => Geometry): void {
         if (transferFn) {
             this._data.forEach((item) => {
@@ -272,6 +288,8 @@ export default class DataSet {
 
     /**
      * 获取当前列的最大值
+     * @param columnName 列名
+     * @returns 最大值或undefined
      */
     getMax(columnName: string): number | undefined {
         const data = this._data;
@@ -294,6 +312,8 @@ export default class DataSet {
 
     /**
      * 获取当前列的总和
+     * @param columnName 列名
+     * @returns 总和或undefined
      */
     getSum(columnName: string): number | undefined {
         const data = this._data;
@@ -315,6 +335,8 @@ export default class DataSet {
 
     /**
      * 获取当前列的最小值
+     * @param columnName 列名
+     * @returns 最小值或undefined
      */
     getMin(columnName: string): number | undefined {
         const data = this._data;
@@ -337,6 +359,8 @@ export default class DataSet {
 
     /**
      * 获取去重的数据
+     * @param columnName 列名
+     * @returns 去重后的字符串数组或undefined
      */
     getUnique(columnName: string): string[] | undefined {
         const data = this._data;
@@ -361,6 +385,8 @@ export default class DataSet {
 
     /**
      * 获取平均值
+     * @param columnName 列名
+     * @returns 平均值
      */
     getAverage(columnName: string): number {
         const data = this._data;
@@ -384,8 +410,8 @@ export default class DataSet {
 
     /**
      * 数据排序
-     * @param {string} columnName - 排序列名
-     * @param {string} order - 排序方式 'asc' 或 'desc'
+     * @param columnName 排序列名
+     * @param order 排序方式 'asc' 或 'desc'
      */
     sort(columnName: string, order: 'asc' | 'desc' = 'asc'): void {
         this._data.sort((a, b) => {
@@ -403,8 +429,9 @@ export default class DataSet {
 
     /**
      * 数据分页
-     * @param {number} page - 页码（从1开始）
-     * @param {number} pageSize - 每页数据条数
+     * @param page 页码（从1开始）
+     * @param pageSize 每页数据条数
+     * @returns 分页后的数据数组
      */
     getPage(page: number, pageSize: number): DataItem[] {
         const start = (page - 1) * pageSize;
@@ -414,6 +441,7 @@ export default class DataSet {
 
     /**
      * 获取数据总数
+     * @returns 数据总数
      */
     getTotal(): number {
         return this._data.length;
@@ -421,7 +449,8 @@ export default class DataSet {
 
     /**
      * 数据分组
-     * @param {string} columnName - 分组列名
+     * @param columnName 分组列名
+     * @returns 分组后的对象，键为分组值，值为对应的数据数组
      */
     groupBy(columnName: string): { [key: string]: DataItem[] } {
         const groups: { [key: string]: DataItem[] } = {};
@@ -439,7 +468,8 @@ export default class DataSet {
 
     /**
      * 查找数据
-     * @param {function} predicate - 查找条件函数
+     * @param predicate 查找条件函数
+     * @returns 找到的第一个数据项或null
      */
     find(predicate: (item: DataItem) => boolean): DataItem | null {
         for (let i = 0; i < this._data.length; i++) {
@@ -452,7 +482,8 @@ export default class DataSet {
 
     /**
      * 查找所有匹配的数据
-     * @param {function} predicate - 查找条件函数
+     * @param predicate 查找条件函数
+     * @returns 所有匹配的数据项数组
      */
     findAll(predicate: (item: DataItem) => boolean): DataItem[] {
         return this._data.filter(predicate);
@@ -460,7 +491,8 @@ export default class DataSet {
 
     /**
      * 数据映射转换
-     * @param {function} mapper - 映射函数
+     * @param mapper 映射函数
+     * @returns 映射后的数组
      */
     map<T>(mapper: (item: DataItem, index: number, array: DataItem[]) => T): T[] {
         return this._data.map(mapper);
@@ -468,22 +500,10 @@ export default class DataSet {
 
     /**
      * 数据过滤
-     * @param {function} filter - 过滤函数
+     * @param predicate 过滤函数
+     * @returns 过滤后的数组
      */
     filter(predicate: (item: DataItem, index: number, array: DataItem[]) => boolean): DataItem[] {
         return this._data.filter(predicate);
     }
-}
-
-function deepCopy(obj: any): any {
-    let newObj: any;
-    if (typeof obj === 'object') {
-        newObj = obj instanceof Array ? [] : {};
-        for (const i in obj) {
-            newObj[i] = obj[i] instanceof HTMLElement ? obj[i] : deepCopy(obj[i]);
-        }
-    } else {
-        newObj = obj;
-    }
-    return newObj;
 }
