@@ -8,5 +8,5 @@ work
 src/tags
 *.*~
 build.sh
-.vitepress/dist
+docs/.vitepress/dist
 
