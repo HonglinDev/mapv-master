@@ -9,4 +9,4 @@ src/tags
 *.*~
 build.sh
 docs/.vitepress/dist
-
+docs/.vitepress/cache
