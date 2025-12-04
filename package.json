@@ -4,12 +4,13 @@
   "description": "a library of geography visualization",
   "main": "build/mapv.js",
   "scripts": {
-    "prepublish": "npm run build && npm run mini",
+    "prepublish": "npm run build && npm run build3d && npm run mini",
     "mini": "npm run build && uglifyjs build/mapv.js -c -m -o build/mapv.min.js",
-    "build": "npm run pre && rollup -c",
+    "build": "npm run pre && vite build",
+    "build3d": "npm run pre && vite build --config vite.config.3d.js",
     "pre": "node build-pre.js",
-    "dev": "npm run pre && rollup -c -w",
-    "dev3d": "npm run pre && rollup -c rollup.config.3d.js -w",
+    "dev": "npm run pre && vite build --watch",
+    "dev3d": "npm run pre && vite build --watch --config vite.config.3d.js",
     "start": "npm run dev",
     "test": "npm run dev",
     "tsc": "tsc",
@@ -30,19 +31,11 @@
   "homepage": "https://github.com/huiyan-fe/mapv#readme",
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "babel-helpers": "^6.24.1",
-    "babel-plugin-transform-remove-console": "^6.9.4",
-    "babel-preset-env": "^1.6.1",
-    "rollup": "^2.79.2",
-    "rollup-plugin-babel": "^2.7.1",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "rollup-watch": "^4.3.1",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
     "uglify-js": "^3.1.9",
+    "vite": "^7.2.6",
     "vitepress": "^1.6.4"
   },
-  "dependencies": {
-    "babel-plugin-external-helpers": "^6.22.0"
-  }
+  "dependencies": {}
 }
