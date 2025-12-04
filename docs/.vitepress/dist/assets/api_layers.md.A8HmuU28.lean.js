@@ -1,1 +1,0 @@
-import{_ as i,c as a,o as n,ag as l}from"./chunks/framework.DfL_BkQ-.js";const c=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"api/layers.md","filePath":"api/layers.md"}'),p={name:"api/layers.md"};function e(h,s,t,k,r,d){return n(),a("div",null,[...s[0]||(s[0]=[l("",146)])])}const g=i(p,[["render",e]]);export{c as __pageData,g as default};

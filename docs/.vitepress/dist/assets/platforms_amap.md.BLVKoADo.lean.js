@@ -1,1 +1,0 @@
-import{_ as a,c as t,o as e}from"./chunks/framework.DfL_BkQ-.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/amap.md","filePath":"platforms/amap.md"}'),r={name:"platforms/amap.md"};function o(s,p,m,c,n,f){return e(),t("div")}const i=a(r,[["render",o]]);export{d as __pageData,i as default};

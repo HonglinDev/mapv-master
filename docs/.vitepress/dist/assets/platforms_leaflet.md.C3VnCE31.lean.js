@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as a}from"./chunks/framework.DfL_BkQ-.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/leaflet.md","filePath":"platforms/leaflet.md"}'),r={name:"platforms/leaflet.md"};function o(s,l,c,f,n,p){return a(),t("div")}const d=e(r,[["render",o]]);export{_ as __pageData,d as default};

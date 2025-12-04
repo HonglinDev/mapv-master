@@ -1,1 +1,0 @@
-import{_ as e,c as o,o as t}from"./chunks/framework.DfL_BkQ-.js";const _=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"platforms/google.md","filePath":"platforms/google.md"}'),a={name:"platforms/google.md"};function r(s,c,n,l,p,m){return t(),o("div")}const d=e(a,[["render",r]]);export{_ as __pageData,d as default};
